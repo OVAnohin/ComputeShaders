@@ -15,6 +15,7 @@ public class AssignTexture : MonoBehaviour
 
     private void Start()
     {
+        //_outputTexture = new RenderTexture(_texResolution, _texResolution, 0);
         _outputTexture = new RenderTexture(_texResolution, _texResolution, 0);
         _outputTexture.enableRandomWrite = true;
         _outputTexture.Create();
@@ -32,7 +33,7 @@ public class AssignTexture : MonoBehaviour
         _shader.SetTexture(_kernel, "Result", _outputTexture);
         _renderer.material.SetTexture("_MainTex", _outputTexture);
 
-        DispathShader(_texResolution / 8, _texResolution / 8);
+        DispathShader(4, 4);
     }
 
     private void DispathShader(int x, int y)
