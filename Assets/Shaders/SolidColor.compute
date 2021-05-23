@@ -1,33 +1,58 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel SolidYellow
 #pragma kernel SplitScreen
+#pragma kernel Circle
+#pragma kernel BlueSquare
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Result;
 int TexResolution;
 
-//[numthreads(4,4,1)]
-//void SolidYellow (uint3 id : SV_DispatchThreadID)
-//{
-//    // TODO: insert actual code here!
-
-//    Result[id.xy] = float4(1.0, 1.0, 0.0, 1.0);
-//}
-[numthreads(4,4,1)]
-void SolidYellow(
-    uint3 groupId : SV_GroupID,
-    uint3 groupThreadId : SV_GroupThreadID,
-    uint3 dispatchThreadId : SV_DispatchThreadID,
-    uint groupIndex : SV_GroupIndex)
+float4 CheckPointInCircle(int x, int y)
 {
-    //groupIndex = 2;
-    //float step = 0.5;
-    if (groupIndex == 15)
+    int halfResolution = TexResolution >> 1;
+    int radius = 20;
+    float2 sourceVector = { halfResolution - x, halfResolution - y};
+    if  (length(sourceVector) <= radius)
     {
-        Result[dispatchThreadId.xy] = float4(1.0, 1.0, 0.0, 1.0);
+        return float4(1.0, 0.0, 0.0, 1.0);
     }
-    
+
+    return float4(0.0, 0.0, 0.0, 1.0);
+}
+
+float4 CheckPointInSquare(int x, int y)
+{
+    int halfResolution = TexResolution >> 1;
+    int width = 80;
+    int heigth = 40;
+    int halfWidth = width >> 1;
+    int halfHeigth = heigth >> 1;
+
+    if  ((halfResolution - halfWidth < x && halfResolution + halfWidth > x) && (halfResolution - halfHeigth < y && halfResolution + halfHeigth > y))
+    {
+        return float4(0.0, 0.0, 1.0, 1.0);
+    }
+
+    return float4(0.0, 0.0, 0.0, 1.0);
+}
+
+int MyStep(int a, int b)
+{
+    if(a >= b)
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+[numthreads(8,8,1)]
+void SolidYellow (uint3 id : SV_DispatchThreadID)
+{
+    //Result[id.xy] = float4((id.x > 128) ? 1 : 0, 0.0, 0.0, 1.0);
+    Result[id.xy] = float4(1.0, (id.x > 128) ? 1 : 0, 0.0, 1.0);
 }
 
 [numthreads(8,8,1)]
@@ -35,5 +60,22 @@ void SplitScreen (uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
     int halfResolution = TexResolution >> 1;
-    Result[id.xy] = float4(step(halfResolution, id.x), step(halfResolution, id.y), 0.0, 1.0);
+    float redValue = 0.0;
+    float greenValue = 0.0;
+    // Result[id.xy] = float4(step(halfResolution, id.x), step(halfResolution, id.y), 0.0, 1.0);
+    Result[id.xy] = float4(MyStep(halfResolution, id.x), MyStep(halfResolution, id.y), 0.0, 1.0);
+}
+
+[numthreads(8,8,1)]
+void Circle (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    Result[id.xy] = CheckPointInCircle(id.x, id.y);
+}
+
+[numthreads(8,8,1)]
+void BlueSquare (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    Result[id.xy] = CheckPointInSquare(id.x, id.y);
 }
