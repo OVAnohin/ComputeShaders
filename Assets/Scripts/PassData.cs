@@ -37,18 +37,20 @@ public class PassData : MonoBehaviour
         _shader.SetTexture(_circlesHandle, "Result", _outputTexture);
         _shader.SetTexture(_clearHandle, "Result", _outputTexture);
 
+        _shader.SetFloat("rnd", Random.Range(0.1f, 9.99f));
+
         _renderer.material.SetTexture("_MainTex", _outputTexture);
     }
 
     private void DispatchKernels(int count)
     {
         _shader.Dispatch(_clearHandle, _texResolution / 8, _texResolution / 8, 1);
-        _shader.SetFloat("time", Time.time);
+        _shader.SetFloat("rnd", Random.Range(0.1f, 0.99f));
         _shader.Dispatch(_circlesHandle, count, 1, 1);
     }
 
     void Update()
     {
-        DispatchKernels(10);
+        DispatchKernels(1);
     }
 }
