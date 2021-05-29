@@ -326,6 +326,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69976426fd237114b9f7ba1970d4cb2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _shader: {fileID: 7200000, guid: 6a1494432fb3654439f58362b2e01791, type: 3}
+  _kernelName: Highlight
+  _trackedObject: {fileID: 1617703570}
+  _radius: 21.7
+  _softenEdge: 32.2
+  _shade: 0.266
 --- !u!1 &1154148709
 GameObject:
   m_ObjectHideFlags: 0

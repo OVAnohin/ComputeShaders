@@ -1,0 +1,26 @@
+﻿#pragma kernel Highlight
+
+Texture2D<float4> RenderedSourceTexture;
+RWTexture2D<float4> outputTexture;
+
+float radius;
+float edgeWidth;
+float shade;
+float4 center;
+
+float InCircle(float2 pt, float2 center, float radius, float edgeWidth)
+{
+    float len = length(pt - center);
+    return 1.0 - smoothstep(radius-edgeWidth, radius, len);
+}
+
+[numthreads(8, 8, 1)]
+void Highlight(uint3 id : SV_DispatchThreadID)
+{
+    float4 sourceColor = RenderedSourceTexture[id.xy];
+    float4 shadedSourceColor = sourceColor * shade;
+    float highlight = InCircle((float2)id.xy, center.xy, radius, edgeWidth);
+    float4 color = lerp(shadedSourceColor, sourceColor, highlight);
+
+    outputTexture[id.xy] = color;
+}
