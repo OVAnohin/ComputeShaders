@@ -13,6 +13,8 @@ public class AssignTexture : MonoBehaviour
     private RenderTexture _outputTexture;
     private int _kernel;
 
+    private ComputeBuffer _resultBuffer;
+
     private void Start()
     {
         _outputTexture = new RenderTexture(_texResolution, _texResolution, 0);
@@ -30,9 +32,10 @@ public class AssignTexture : MonoBehaviour
         _kernel = _shader.FindKernel(_kernelName);
         _shader.SetInt("TexResolution", _texResolution);
         _shader.SetTexture(_kernel, "Result", _outputTexture);
+        _shader.SetInt("count", 0);
         _renderer.material.SetTexture("_MainTex", _outputTexture);
 
-        DispathShader(32, 32);
+        DispathShader(1, 1);
     }
 
     private void DispathShader(int x, int y)
