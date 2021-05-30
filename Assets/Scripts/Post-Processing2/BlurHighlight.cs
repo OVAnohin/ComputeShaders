@@ -5,6 +5,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class BlurHighlight : BaseCompletePP
 {
+    [SerializeField] private Transform _target;
+
     [Range(0, 50)]
     [SerializeField] private int _blurRadius = 20;
 
@@ -16,9 +18,10 @@ public class BlurHighlight : BaseCompletePP
 
     [Range(0.0f, 1.0f)]
     [SerializeField] private float _shade = 0.5f;
-    [SerializeField] private Transform _target;
 
     private Vector4 _center;
+    private RenderTexture _horizontalOutputTexture = null;
+    private int _kernelHorizontalID;
 
     protected override void Init()
     {
@@ -29,13 +32,14 @@ public class BlurHighlight : BaseCompletePP
     protected override void CreateTextures()
     {
         base.CreateTextures();
+        Shader.SetTexture(_kernelHorizontalID, "RenderedSourceTexture", RenderedSourceTexture);
     }
 
     private void OnValidate()
     {
-        if(!IsIneted)
+        if (!IsIneted)
             Init();
-           
+
         SetProperties();
     }
 
@@ -73,11 +77,13 @@ public class BlurHighlight : BaseCompletePP
                 _center.y = position.y;
                 Shader.SetVector("center", _center);
             }
-            bool resChange = false;
-            CheckResolution(out resChange);
-            if (resChange) SetProperties();
+
+            bool isResolutionChanged = false;
+            CheckResolution(out isResolutionChanged);
+            if (isResolutionChanged)
+                SetProperties();
+
             DispatchWithSource(ref source, ref destination);
         }
     }
-
 }

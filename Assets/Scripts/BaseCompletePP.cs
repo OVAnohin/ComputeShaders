@@ -138,13 +138,13 @@ public class BaseCompletePP : MonoBehaviour
         Graphics.Blit(_outputTexture, destination);
     }
 
-    protected void CheckResolution(out bool resolutionChange)
+    protected void CheckResolution(out bool isResolutionChanged)
     {
-        resolutionChange = false;
+        isResolutionChanged = false;
 
         if (_textureSize.x != _camera.pixelWidth || _textureSize.y != _camera.pixelHeight)
         {
-            resolutionChange = true;
+            isResolutionChanged = true;
             CreateTextures();
         }
     }
